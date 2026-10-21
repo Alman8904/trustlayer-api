@@ -31,7 +31,7 @@ public class ApiKey {
     @Column(name = "revoked_at")
     private Instant revokedAt;
 
-    public ApiKey(Client client, String keyHash, String keyPrefix) {
+    public ApiKey(Client client, String keyHash) {
         this.client = client;
         this.keyHash = keyHash;
     }
