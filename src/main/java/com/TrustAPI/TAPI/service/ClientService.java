@@ -1,23 +1,27 @@
 package com.TrustAPI.TAPI.service;
 
+import com.TrustAPI.TAPI.dto.client.ClientRegistrationRequest;
+import com.TrustAPI.TAPI.dto.client.ClientRegistrationResponse;
 import com.TrustAPI.TAPI.entity.Client;
-import com.TrustAPI.TAPI.repository.ApiKeyRepository;
 import com.TrustAPI.TAPI.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class ClientService {
 
     private final ClientRepository clientRepository;
-    private final ApiKeyRepository apiKeyRepository;
+    private final ApiKeyService apiKeyService;
 
     //create a new client
-    public Client ClientRegistration(String name) {
-        Client client = new Client(name);
-        return clientRepository.save(client);
-    }
+    @Transactional
+    public ClientRegistrationResponse registerClient(ClientRegistrationRequest request) {
+        Client client = clientRepository.save(new Client(request.name()));
 
-    //
+        String apiKey = apiKeyService.generateAndSaveApiKey(client);
+
+        return new ClientRegistrationResponse(client.getId(), client.getName(), apiKey);
+    }
 }
