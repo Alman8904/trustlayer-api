@@ -20,11 +20,15 @@ public class Client {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @Column(nullable = false, length = 255)
+    private String email;
+
     @Column(name = "created_at", nullable = false,
             insertable = false, updatable = false)
     private Instant createdAt;
 
-    public Client(String name) {
+    public Client(String name, String email) {
         this.name = name;
+        this.email= email;
     }
 }

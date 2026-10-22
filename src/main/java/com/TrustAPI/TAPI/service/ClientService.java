@@ -18,10 +18,10 @@ public class ClientService {
     //create a new client
     @Transactional
     public ClientRegistrationResponse registerClient(ClientRegistrationRequest request) {
-        Client client = clientRepository.save(new Client(request.name()));
+        Client client = clientRepository.save(new Client(request.name(), request.email().trim().toLowerCase()));
 
         String apiKey = apiKeyService.generateAndSaveApiKey(client);
 
-        return new ClientRegistrationResponse(client.getId(), client.getName(), apiKey);
+        return new ClientRegistrationResponse(client.getId(), client.getName(), client.getEmail(),apiKey);
     }
 }
