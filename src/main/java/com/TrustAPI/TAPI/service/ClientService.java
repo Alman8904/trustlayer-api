@@ -3,6 +3,7 @@ package com.TrustAPI.TAPI.service;
 import com.TrustAPI.TAPI.dto.client.ClientRegistrationRequest;
 import com.TrustAPI.TAPI.dto.client.ClientRegistrationResponse;
 import com.TrustAPI.TAPI.entity.Client;
+import com.TrustAPI.TAPI.exception.DuplicateEmailException;
 import com.TrustAPI.TAPI.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,13 @@ public class ClientService {
     //create a new client
     @Transactional
     public ClientRegistrationResponse registerClient(ClientRegistrationRequest request) {
-        Client client = clientRepository.save(new Client(request.name(), request.email().trim().toLowerCase()));
+        String email = request.email().trim().toLowerCase();
+
+        if(clientRepository.existsByEmailIgnoreCase(email)){
+            throw new DuplicateEmailException();
+        }
+
+        Client client = clientRepository.save(new Client(request.name(), email));
 
         String apiKey = apiKeyService.generateAndSaveApiKey(client);
 
