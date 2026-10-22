@@ -2,6 +2,7 @@ package com.TrustAPI.TAPI.config;
 
 import com.TrustAPI.TAPI.security.ApiKeyAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +15,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final ApiKeyAuthenticationFilter apiKeyAuthenticationFilter;
+
+    // Prevent servlet-container registration; keep the filter in Spring Security.
+    @Bean
+    public FilterRegistrationBean<ApiKeyAuthenticationFilter>
+    apiKeyFilterRegistration(ApiKeyAuthenticationFilter filter) {
+
+        FilterRegistrationBean<ApiKeyAuthenticationFilter> registration =
+                new FilterRegistrationBean<>(filter);
+
+        registration.setEnabled(false);
+        return registration;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
